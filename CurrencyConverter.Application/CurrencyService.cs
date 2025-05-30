@@ -17,12 +17,14 @@ public class CurrencyService(IFrankfurterClient client) : ICurrencyService
         for (int i = 0; i < 7; i++)
         {
             var monday = DateTime.Today.AddDays(-((int)DateTime.Today.DayOfWeek - 1) - i * 7);
-            var dateKey = monday.ToString("yyyy-MM-dd");
+            var normalizedCurrencies = currencies.Select(c => c.ToUpperInvariant()).OrderBy(c => c).ToArray();
+            var currencyKey = string.Join("-", normalizedCurrencies);
+            var cacheKey = $"{monday:yyyy-MM-dd}_{currencyKey}";
 
-            if (!_cache.TryGetValue(dateKey, out var rates))
+            if (!_cache.TryGetValue(cacheKey, out var rates))
             {
-                rates = await client.GetRatesForDateAsync(monday, currencies);
-                _cache[dateKey] = rates;
+                rates = await client.GetRatesForDateAsync(monday, normalizedCurrencies);
+                _cache[cacheKey] = rates;
             }
 
             results.Add(new CurrencyRateResult
@@ -35,9 +37,4 @@ public class CurrencyService(IFrankfurterClient client) : ICurrencyService
 
         return results.OrderBy(r => r.Date).ToList();
     }
-}
-
-public interface ICurrencyService
-{
-    Task<List<CurrencyRateResult>> GetHistoricalRatesAsync(decimal amount, string[] strings);
 }
