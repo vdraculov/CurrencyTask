@@ -2,7 +2,6 @@ using CurrencyConverter.Application;
 using CurrencyConverter.Infrastructure.Cache;
 using CurrencyConverter.Infrastructure.Clients;
 using Moq;
-using Xunit;
 
 namespace CurrencyConverter.Tests.Application;
 

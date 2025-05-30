@@ -9,9 +9,9 @@ public class CurrencyController : Controller
 {
     private readonly ILogger<CurrencyController> _logger;
 
-    private readonly ICurrencyService _currencyService;
+    private readonly Lazy<ICurrencyService> _currencyService;
 
-    public CurrencyController(ICurrencyService currencyService)
+    public CurrencyController(Lazy<ICurrencyService> currencyService)
     {
         _currencyService = currencyService;
     }
@@ -26,7 +26,7 @@ public class CurrencyController : Controller
     {
         try
         {
-            var results = await _currencyService.GetHistoricalRatesAsync(amount, new[] { currency1, currency2, currency3 });
+            var results = await _currencyService.Value.GetHistoricalRatesAsync(amount, new[] { currency1, currency2, currency3 });
             return Json(results);
         }
         catch (Exception ex)

@@ -1,6 +1,7 @@
 using CurrencyConverter.Application;
 using CurrencyConverter.Infrastructure.Cache;
 using CurrencyConverter.Infrastructure.Clients;
+using CurrencyConverter.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<IFrankfurterClient, FrankfurterClient>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
+builder.Services.AddTransient<Lazy<ICurrencyService>>(sp => 
+    new Lazy<ICurrencyService>(() => {
+        using var scope = sp.CreateScope();
+        return scope.ServiceProvider.GetRequiredService<ICurrencyService>();
+    }));
+
+
 builder.Services.AddSingleton<ICurrencyRateCache>(
     new InMemoryCurrencyRateCache(TimeSpan.FromMinutes(15)));
 
@@ -21,11 +29,11 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(
