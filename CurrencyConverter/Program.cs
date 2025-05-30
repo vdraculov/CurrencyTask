@@ -1,4 +1,5 @@
 using CurrencyConverter.Application;
+using CurrencyConverter.Infrastructure.Cache;
 using CurrencyConverter.Infrastructure.Clients;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<IFrankfurterClient, FrankfurterClient>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
+builder.Services.AddSingleton<ICurrencyRateCache>(
+    new InMemoryCurrencyRateCache(TimeSpan.FromMinutes(15)));
 
 var app = builder.Build();
 
