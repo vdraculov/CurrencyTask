@@ -1,0 +1,62 @@
+## Build artifacts
+bin/
+obj/
+out/
+
+## Rider project files (idea-based)
+.idea/
+*.sln.iml
+
+## User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## ASP.NET temporary files
+*.vspscc
+*.vssscc
+.vs/
+
+## .NET Core debug & publish folders
+**/Debug/
+**/Release/
+**/publish/
+**/*.dbmdl
+**/appsettings.Development.json
+**/appsettings.*.local.json
+
+## Logs
+*.log
+
+## Web assets cache
+**/staticwebassets.build.json
+**/staticwebassets.runtime.json
+**/staticwebassets.pack.json
+
+## wwwroot generated or minified content (optional)
+# wwwroot/css/
+# wwwroot/js/
+
+## Node_modules (if using npm for front-end)
+node_modules/
+
+## JetBrains Rider files (optional to share `.idea/`)
+.idea/
+*.iws
+.idea/*
+
+# Rider cache (optional, auto regenerated)
+.idea/.idea.*
+
+## Test coverage results
+TestResults/
+coverage/
+*.coverage
+
+## Optional: Ignore local SQLite/EFCore migrations
+*.sqlite
+Migrations/
+
+## Optional: skip packages folder if using package restore
+packages/
