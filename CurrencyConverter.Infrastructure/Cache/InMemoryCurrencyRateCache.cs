@@ -39,6 +39,12 @@ public class InMemoryCurrencyRateCache(TimeSpan? ttl = null) : ICurrencyRateCach
         var key = GetKey(date, currencies);
         _cache[key] = (DateTime.UtcNow + _ttl, rates);
     }
+    
+    public void Remove(DateTime date, string[] currencies)
+    {
+        var key = GetKey(date, currencies);
+        _cache.TryRemove(key, out _);
+    }
 }
 
 public interface ICurrencyRateCache
