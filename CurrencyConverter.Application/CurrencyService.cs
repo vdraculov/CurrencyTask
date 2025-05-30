@@ -1,11 +1,19 @@
 ﻿using CurrencyConverter.Core.Domain;
+using CurrencyConverter.Infrastructure.Cache;
 using CurrencyConverter.Infrastructure.Clients;
 
 namespace CurrencyConverter.Application;
 
-public class CurrencyService(IFrankfurterClient client) : ICurrencyService
+public class CurrencyService : ICurrencyService
 {
-    private readonly Dictionary<string, Dictionary<string, decimal>> _cache = new();
+    private readonly IFrankfurterClient client;
+    private readonly ICurrencyRateCache _cache;
+
+    public CurrencyService(IFrankfurterClient client, ICurrencyRateCache cache)
+    {
+        this.client = client;
+        _cache = cache;
+    }
 
     public async Task<List<CurrencyRateResult>> GetHistoricalRatesAsync(decimal amount, string[] currencies)
     {
@@ -18,13 +26,11 @@ public class CurrencyService(IFrankfurterClient client) : ICurrencyService
         {
             var monday = DateTime.Today.AddDays(-((int)DateTime.Today.DayOfWeek - 1) - i * 7);
             var normalizedCurrencies = currencies.Select(c => c.ToUpperInvariant()).OrderBy(c => c).ToArray();
-            var currencyKey = string.Join("-", normalizedCurrencies);
-            var cacheKey = $"{monday:yyyy-MM-dd}_{currencyKey}";
 
-            if (!_cache.TryGetValue(cacheKey, out var rates))
+            if (!_cache.TryGet(monday, normalizedCurrencies, out var rates))
             {
                 rates = await client.GetRatesForDateAsync(monday, normalizedCurrencies);
-                _cache[cacheKey] = rates;
+                _cache.Set(monday, normalizedCurrencies, rates);
             }
 
             results.Add(new CurrencyRateResult
