@@ -3,26 +3,17 @@ using System.Text.Json;
 
 namespace CurrencyConverter.Middlewares;
 
-public class ErrorHandlingMiddleware
+public class ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
 {
-    private readonly RequestDelegate _next;
-    private readonly ILogger<ErrorHandlingMiddleware> _logger;
-
-    public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
-    {
-        _next = next;
-        _logger = logger;
-    }
-
     public async Task Invoke(HttpContext context)
     {
         try
         {
-            await _next(context);
+            await next(context);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhandled exception occurred while processing {Path}", context.Request.Path);
+            logger.LogError(ex, "Unhandled exception occurred while processing {Path}", context.Request.Path);
             await HandleExceptionAsync(context, ex);
         }
     }

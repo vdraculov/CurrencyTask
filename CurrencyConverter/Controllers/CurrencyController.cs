@@ -7,7 +7,6 @@ namespace CurrencyConverter.Controllers;
 
 public class CurrencyController : Controller
 {
-    private readonly ILogger<CurrencyController> _logger;
 
     private readonly Lazy<ICurrencyService> _currencyService;
 
@@ -22,22 +21,16 @@ public class CurrencyController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> GetRates(decimal amount, string currency1, string currency2, string currency3)
+    public async Task<IActionResult> GetRates([FromBody] CurrencyRateRequest model)
     {
         try
         {
-            var results = await _currencyService.Value.GetHistoricalRatesAsync(amount, new[] { currency1, currency2, currency3 });
+            var results = await _currencyService.Value.GetHistoricalRatesAsync(model.Amount, model.Currencies);
             return Json(results);
         }
         catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
