@@ -21,7 +21,7 @@ public class CurrencyController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> GetRates([FromBody] CurrencyRateRequest model)
+    public async Task<IActionResult> ProcessRates([FromBody] CurrencyRateRequestViewModel model)
     {
         try
         {

@@ -43,7 +43,7 @@
             currencies: [$("#cur1").val(), $("#cur2").val(), $("#cur3").val()]
         };
         $.ajax({
-            url: "/Currency/GetRates",
+            url: "/Currency/ProcessRates",
             method: "POST",
             data: JSON.stringify(data),
             contentType: "application/json",
