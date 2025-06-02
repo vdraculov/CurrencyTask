@@ -25,6 +25,8 @@ public class CurrencyController : Controller
     {
         try
         {
+            if (model == null || model.Currencies == null || model.Currencies.Length < 1)
+                return BadRequest("Invalid input.");
             var results = await _currencyService.Value.GetHistoricalRatesAsync(model.Amount, model.Currencies);
             return Json(results);
         }
